@@ -9,7 +9,7 @@ func _ready():
 	call_deferred("set_state", states.idle)
 
 func _input(event):
-	if event.is_action_pressed("jump"):
+	if event.is_action_pressed("jump") && parent.is_grounded:
 		parent.velocity.y = parent.MAX_JUMP_VEL
 	if state == states.jump:
 		if event.is_action_released("jump") && parent.velocity.y < parent.MIN_JUMP_VEL: ## if jumping
@@ -25,6 +25,7 @@ func _get_transition(delta):
 		states.idle:
 			if !parent.is_grounded:
 				if parent.velocity.y < 0:
+					print("entered if idle jump")
 					return states.jump
 				elif parent.velocity.y > 0:
 					return states.fall

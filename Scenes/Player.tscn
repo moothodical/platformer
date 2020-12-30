@@ -16,24 +16,6 @@ script = ExtResource( 2 )
 position = Vector2( 0.236237, 1.10243 )
 shape = SubResource( 1 )
 
-[node name="DownRaycasts" type="Node2D" parent="."]
-position = Vector2( 13.6646, 0.210224 )
-
-[node name="RayCast2D" type="RayCast2D" parent="DownRaycasts"]
-position = Vector2( -15.6836, -0.22806 )
-enabled = true
-collision_mask = 4
-
-[node name="RayCast2D2" type="RayCast2D" parent="DownRaycasts"]
-position = Vector2( -13.625, -0.125 )
-enabled = true
-collision_mask = 4
-
-[node name="RayCast2D3" type="RayCast2D" parent="DownRaycasts"]
-position = Vector2( -11.7082, -0.201065 )
-enabled = true
-collision_mask = 4
-
 [node name="PlayerFSM" type="Node2D" parent="."]
 script = ExtResource( 3 )
 
@@ -42,6 +24,20 @@ margin_left = -19.3624
 margin_top = -48.827
 margin_right = 20.6376
 margin_bottom = -34.827
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GroundedRaycast" type="RayCast2D" parent="."]
+scale = Vector2( 1, 0.152 )
+enabled = true
+collision_mask = 4
+
+[node name="GroundedLabel" type="Label" parent="."]
+margin_left = -17.2452
+margin_top = -18.9776
+margin_right = 22.7548
+margin_bottom = -4.97756
 __meta__ = {
 "_edit_use_anchors_": false
 }

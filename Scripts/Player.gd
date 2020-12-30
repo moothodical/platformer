@@ -3,11 +3,11 @@ extends KinematicBody2D
 const UP = Vector2(0, -1)
 const MAX_JUMP_VEL = -350
 const MIN_JUMP_VEL = 10
-const MAX_SPEED = 500
+const MAX_SPEED = 300
 
 var velocity = Vector2()
 var acceleration = 50
-var move_speed = 500
+var move_speed = 100
 var gravity = 1200
 var jump_velocity = -500
 var jump_damp = 0.8
@@ -16,6 +16,7 @@ var is_grounded
 func apply_movement():
 	velocity = move_and_slide(velocity, UP) 
 	is_grounded = check_is_grounded()
+	$GroundedLabel.text = str(is_grounded)
 
 func apply_gravity(delta):
 	velocity.y += gravity * delta
@@ -35,9 +36,5 @@ func _handle_move_input():
 		get_node("CharacterRig/Torso").set_flip_h(false)
 
 func check_is_grounded():
-	for raycast in $DownRaycasts.get_children():
-		if raycast.is_colliding():
-			return true
-	return false
-			
+	return true if $GroundedRaycast.is_colliding() else false
 
