@@ -2,15 +2,12 @@ extends KinematicBody2D
 
 const UP = Vector2(0, -1)
 const MAX_JUMP_VEL = -350
-const MIN_JUMP_VEL = 10
-const MAX_SPEED = 300
+const MIN_JUMP_VEL = -100
+const MAX_SPEED = 100
 
 var velocity = Vector2()
-var acceleration = 50
 var move_speed = 100
-var gravity = 1200
-var jump_velocity = -500
-var jump_damp = 0.8
+var gravity = 1000
 var is_grounded
 
 func apply_movement():
@@ -22,7 +19,7 @@ func apply_gravity(delta):
 	velocity.y += gravity * delta
 
 func _get_h_weight():
-	return 0.25 if is_grounded else 0.025 # player has less control in the air
+	return 0.2 if is_grounded else 0.1 # player has less control in the air
 
 func _handle_move_input():
 	var move_dir = -int(Input.is_action_pressed("move_left")) + int(Input.is_action_pressed("move_right"))
@@ -32,7 +29,7 @@ func _handle_move_input():
 	if move_dir == -1: # if facing left
 		print("entered if")
 		get_node("CharacterRig/Torso").set_flip_h(true)
-	else:
+	elif move_dir == 1: # facing right
 		get_node("CharacterRig/Torso").set_flip_h(false)
 
 func check_is_grounded():

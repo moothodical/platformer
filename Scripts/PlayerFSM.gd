@@ -25,20 +25,18 @@ func _get_transition(delta):
 		states.idle:
 			if !parent.is_grounded:
 				if parent.velocity.y < 0:
-					print("entered if idle jump")
 					return states.jump
 				elif parent.velocity.y > 0:
 					return states.fall
-			elif abs(parent.velocity.x) > 100:
+			elif abs(parent.velocity.x) > parent.MAX_SPEED / 4:
 				return states.run
 		states.run:
-			print(parent.velocity.x)
 			if !parent.is_grounded:
 				if parent.velocity.y < 0:
 					return states.jump
 				elif parent.velocity.y > 0:
 					return states.fall
-			elif abs(parent.velocity.x) < 100:
+			elif abs(parent.velocity.x) < parent.MAX_SPEED / 4:
 				return states.idle
 		states.jump:
 			if parent.is_grounded:
