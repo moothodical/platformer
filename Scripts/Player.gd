@@ -6,15 +6,21 @@ onready var right_wall_raycasts = $WallRaycasts/RightWallRaycasts
 const UP = Vector2(0, -1)
 const MAX_JUMP_VEL = -250
 const MIN_JUMP_VEL = -100
-const MAX_SPEED = 300
+const MAX_SPEED = 200
 const WALL_JUMP_VEL = Vector2(MAX_SPEED, -300)
+const SUPER_JUMP_VEL = Vector2(0, -350)
 
 var velocity = Vector2()
 var move_speed = 100
 var gravity = 850
 var is_grounded
+var is_crouching
 var wall_direction = 1
 var move_dir
+
+func _cap_gravity_wall_slide():
+	var max_velocity = 16 if !Input.is_action_pressed("ui_down") else 6 * 16
+	velocity.y = min(velocity.y, max_velocity)
 
 func apply_movement():
 	velocity = move_and_slide(velocity, UP) 
@@ -26,8 +32,11 @@ func apply_gravity(delta):
 
 func wall_jump():
 	var wall_jump_velocity = WALL_JUMP_VEL
-	wall_jump_velocity.x *= -wall_direction
+	wall_jump_velocity.x *= wall_direction
 	velocity = wall_jump_velocity
+
+func super_jump():
+	velocity = SUPER_JUMP_VEL
 
 func _get_h_weight():
 	return 0.2 if is_grounded else 0.1 # player has less control in the air
@@ -46,6 +55,9 @@ func _handle_move_input():
 
 func check_is_grounded():
 	return true if $GroundedRaycast.is_colliding() else false
+
+func _update_velocity():
+	super_jump()
 
 func _update_wall_direction():
 	var is_near_wall_left = check_is_valid_wall(left_wall_raycasts)

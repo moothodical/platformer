@@ -7,6 +7,8 @@ func _ready():
 	add_state("jump")
 	add_state("fall")
 	add_state("wall_slide")
+	add_state("crouch")
+	add_state("super_jump")
 	call_deferred("set_state", states.idle)
 
 func _input(event):
@@ -16,10 +18,21 @@ func _input(event):
 		if event.is_action_pressed("jump"):
 			parent.wall_jump()
 			set_state(states.jump)
+	elif state == states.crouch:
+		print("entered if crouch")
+		if event.is_action_released("down"):
+			set_state(states.idle)
+		elif event.is_action_pressed("jump"):
+			parent.super_jump()
 	elif state == states.jump:
 		if event.is_action_released("jump") && parent.velocity.y < parent.MIN_JUMP_VEL: ## if jumping
 			parent.velocity.y = parent.MIN_JUMP_VEL
-	
+	elif state == states.idle:
+		if event.is_action_pressed("down"):
+			set_state(states.crouch)
+	elif state == states.run:
+		if event.is_action_pressed("down"):
+			set_state(states.crouch)
 
 func _state_logic(delta):
 	parent._update_move_direction()
@@ -48,7 +61,6 @@ func _get_transition(delta):
 			elif abs(parent.velocity.x) < parent.MAX_SPEED / 4:
 				return states.idle
 		states.jump:
-			print(parent.wall_direction)
 			if parent.wall_direction != 0:
 				return states.wall_slide
 			elif parent.is_grounded:
@@ -65,29 +77,38 @@ func _get_transition(delta):
 		states.wall_slide:
 			if parent.wall_direction == 0:
 				return states.fall
+			elif parent.check_is_grounded():
+				return states.idle 
+		states.crouch:
+			if parent.velocity.y < 0:
+				parent.super_jump()
+				return states.super_jump
+		states.super_jump:
+			if parent.check_is_grounded():
+				return states.idle
 			
-			
-	
 	return null
 
 # setting anim, tween, timers, etc
 func _enter_state(new_state, old_state):
 	get_parent().get_node("StateLabel").text = states.keys()[state]
-	if new_state == states.run:
-		anim.play("run")
-	elif new_state == states.idle:
-		anim.play("idle")
-	elif new_state == states.jump:
-		anim.play("jump")
-	elif new_state == states.fall:
-		anim.play("fall")
-	elif new_state == states.wall_slide:
-		pass
-		# play wall slide anim
-		#parent.set_flip_h(true)
+	
+	match new_state:
+		states.run:
+			anim.play("run")
+		states.idle:
+			anim.play("idle")
+		states.jump:
+			anim.play("jump")
+		states.fall:
+			anim.play("fall")
+		states.crouch:
+			anim.play("crouch_down")
 	
 func _exit_state(old_state, new_state):
 	if new_state != states.run:
 		anim.stop(true)
 	elif new_state != states.idle:
 		anim.stop(true)
+	elif old_state == states.crouch:
+		anim.play("crouch_up")
