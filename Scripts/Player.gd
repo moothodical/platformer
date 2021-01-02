@@ -6,9 +6,9 @@ onready var right_wall_raycasts = $WallRaycasts/RightWallRaycasts
 const UP = Vector2(0, -1)
 const MAX_JUMP_VEL = -250
 const MIN_JUMP_VEL = -100
-const MAX_SPEED = 200
+const MAX_SPEED = 125
 const WALL_JUMP_VEL = Vector2(MAX_SPEED, -300)
-const SUPER_JUMP_VEL = Vector2(0, -350)
+const SUPER_JUMP_VEL = -350
 
 var velocity = Vector2()
 var move_speed = 100
@@ -36,7 +36,7 @@ func wall_jump():
 	velocity = wall_jump_velocity
 
 func super_jump():
-	velocity = SUPER_JUMP_VEL
+	velocity.y = SUPER_JUMP_VEL
 
 func _get_h_weight():
 	return 0.2 if is_grounded else 0.1 # player has less control in the air
