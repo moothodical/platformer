@@ -51,6 +51,7 @@ down={
 
 2d_physics/layer_1="Player"
 2d_physics/layer_3="Platforms"
+2d_physics/layer_5="Enemy"
 
 [rendering]
 

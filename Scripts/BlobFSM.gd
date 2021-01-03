@@ -1,16 +1,29 @@
 extends "res://Scripts/StateMachine.gd"
 
-
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
-
-onready var parent = 
-# Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	add_state("idle")
+	add_state("follow")
+	add_state("attack")
+	call_deferred("set_state", states.idle)
+	pass 
 
+func _state_logic(delta):
+	parent.apply_gravity(delta)
+	parent.apply_movement()
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+func _get_transition(delta):
+	match state:
+		states.idle:
+			pass
+		states.follow:
+			pass
+		states.attack:
+			pass
+	return null
+
+# setting anim, tween, timers, etc
+func _enter_state(new_state, old_state):
+	pass
+
+func _exit_state(old_state, new_state):
+	pass
