@@ -1,7 +1,10 @@
 extends KinematicBody2D
 
+signal player_hit
+
 onready var left_wall_raycasts = $WallRaycasts/LeftWallRaycasts
 onready var right_wall_raycasts = $WallRaycasts/RightWallRaycasts
+onready var health_bar = $HealthBar
 
 const UP = Vector2(0, -1)
 const MAX_JUMP_VEL = -250
@@ -10,6 +13,8 @@ const MAX_SPEED = 125
 const WALL_JUMP_VEL = Vector2(MAX_SPEED, -300)
 const SUPER_JUMP_VEL = -350
 
+var start_health = 100
+var current_health
 var velocity = Vector2()
 var move_speed = 100
 var gravity = 850
@@ -17,6 +22,12 @@ var is_grounded
 var is_crouching
 var wall_direction = 1
 var move_dir
+var enemies = {"Blob": 10}
+
+func _ready():
+	health_bar.update_health(start_health)
+	current_health = start_health
+	pass
 
 func _cap_gravity_wall_slide():
 	var max_velocity = 16 if !Input.is_action_pressed("ui_down") else 6 * 16
@@ -75,9 +86,15 @@ func check_is_valid_wall(wall_raycasts):
 			#if dot > PI * 0.35 && dot < PI * 0.55:
 			return true
 	return false
-	
 
+func update_health(damage):
+	current_health -= damage
+	health_bar.update_health(current_health)
 
+func player_hit(damage):
+	print("damage is: ", damage)
+	update_health(damage)
 
-
-
+func _on_CollisionArea_body_entered(body):
+	if body.is_in_group("Enemy"):
+		player_hit(enemies.get(body.name))

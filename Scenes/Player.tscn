@@ -1,13 +1,19 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://Scenes/CharacterRig.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Scripts/Player.gd" type="Script" id=2]
 [ext_resource path="res://Scripts/PlayerFSM.gd" type="Script" id=3]
+[ext_resource path="res://Scenes/HealthBar.tscn" type="PackedScene" id=4]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 2.10114, 3.75206 )
 
+[sub_resource type="CapsuleShape2D" id=2]
+radius = 3.25133
+height = 6.88976
+
 [node name="Player" type="KinematicBody2D"]
+collision_mask = 16
 script = ExtResource( 2 )
 
 [node name="CharacterRig" parent="." instance=ExtResource( 1 )]
@@ -77,3 +83,18 @@ rotation = 1.5708
 scale = Vector2( 0.1, 0.07 )
 enabled = true
 collision_mask = 4
+
+[node name="CollisionArea" type="Area2D" parent="."]
+scale = Vector2( 1.00785, 0.946321 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CollisionArea"]
+position = Vector2( 0, 1.48819 )
+shape = SubResource( 2 )
+
+[node name="HealthBar" parent="." instance=ExtResource( 4 )]
+margin_left = -5.25593
+margin_top = -7.75876
+margin_right = -5.25593
+margin_bottom = -7.75876
+rect_scale = Vector2( 0.52, 0.56 )
+[connection signal="body_entered" from="CollisionArea" to="." method="_on_CollisionArea_body_entered"]

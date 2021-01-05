@@ -9,6 +9,7 @@ func _ready():
 	add_state("wall_slide")
 	add_state("crouch")
 	add_state("super_jump")
+	add_state("dead")
 	call_deferred("set_state", states.idle)
 
 func _input(event):
@@ -19,7 +20,6 @@ func _input(event):
 			parent.wall_jump()
 			set_state(states.jump)
 	elif state == states.crouch:
-		print("entered if crouch")
 		if event.is_action_released("down"):
 			set_state(states.idle)
 		elif event.is_action_pressed("jump"):
@@ -86,7 +86,8 @@ func _get_transition(delta):
 		states.super_jump:
 			if parent.check_is_grounded():
 				return states.idle
-			
+		states.dead:
+			pass
 	return null
 
 # setting anim, tween, timers, etc
@@ -103,6 +104,7 @@ func _enter_state(new_state, old_state):
 		states.fall:
 			anim.play("fall")
 		states.crouch:
+			parent.is_crouching = true
 			anim.play("crouch_down")
 	
 func _exit_state(old_state, new_state):
@@ -111,4 +113,5 @@ func _exit_state(old_state, new_state):
 	elif new_state != states.idle:
 		anim.stop(true)
 	elif old_state == states.crouch:
+		parent.is_crouching = true
 		anim.play("crouch_up")
