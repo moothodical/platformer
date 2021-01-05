@@ -9,7 +9,7 @@ func _ready():
 	add_state("wall_slide")
 	add_state("crouch")
 	add_state("super_jump")
-	add_state("dead")
+	add_state("slide")
 	call_deferred("set_state", states.idle)
 
 func _input(event):
@@ -32,11 +32,15 @@ func _input(event):
 			set_state(states.crouch)
 	elif state == states.run:
 		if event.is_action_pressed("down"):
-			set_state(states.crouch)
+			set_state(states.slide)
+	elif state == states.slide:
+		if event.is_action_released("down"):
+			set_state(states.run)
 
 func _state_logic(delta):
 	parent._update_move_direction()
 	parent._update_wall_direction()
+	
 	if state != states.wall_slide:
 		parent._handle_move_input()
 	parent.apply_gravity(delta)
@@ -60,6 +64,8 @@ func _get_transition(delta):
 					return states.fall
 			elif abs(parent.velocity.x) < parent.MAX_SPEED / 4:
 				return states.idle
+			elif parent.is_crouching:
+				return states.slide
 		states.jump:
 			if parent.wall_direction != 0:
 				return states.wall_slide
@@ -86,7 +92,9 @@ func _get_transition(delta):
 		states.super_jump:
 			if parent.check_is_grounded():
 				return states.idle
-		states.dead:
+		states.slide:
+			if abs(parent.velocity.x) < parent.MAX_SPEED / 4:
+				return states.idle
 			pass
 	return null
 
@@ -106,12 +114,18 @@ func _enter_state(new_state, old_state):
 		states.crouch:
 			parent.is_crouching = true
 			anim.play("crouch_down")
+		states.slide:
+			parent.is_sliding = true
 	
 func _exit_state(old_state, new_state):
+	if old_state == states.crouch:
+		print("olds tate crouhc")
+		parent.is_crouching = false
+		anim.play("crouch_up")
+	elif old_state == states.slide:
+		parent.is_sliding = false
 	if new_state != states.run:
 		anim.stop(true)
 	elif new_state != states.idle:
 		anim.stop(true)
-	elif old_state == states.crouch:
-		parent.is_crouching = true
-		anim.play("crouch_up")
+

@@ -20,6 +20,7 @@ var move_speed = 100
 var gravity = 850
 var is_grounded
 var is_crouching
+var is_sliding = false
 var wall_direction = 1
 var move_dir
 var enemies = {"Blob": 10}
@@ -37,6 +38,8 @@ func apply_movement():
 	velocity = move_and_slide(velocity, UP) 
 	is_grounded = check_is_grounded()
 	$GroundedLabel.text = str(is_grounded)
+	$CrouchingLabel.text = str(is_crouching)
+	$SlidingLabel.text = str(is_sliding)
 
 func apply_gravity(delta):
 	velocity.y += gravity * delta
@@ -49,15 +52,20 @@ func wall_jump():
 func super_jump():
 	velocity.y = SUPER_JUMP_VEL
 
-func _get_h_weight():
-	return 0.2 if is_grounded else 0.1 # player has less control in the air
-
 func _update_move_direction():
 	move_dir = -int(Input.is_action_pressed("move_left")) + int(Input.is_action_pressed("move_right"))
 
+func _get_h_weight():
+	if is_sliding:
+		return 0.5
+	elif is_grounded:
+		return 0.2
+	else:
+		return 0.1
+
 func _handle_move_input():
 	velocity.x = lerp(velocity.x, MAX_SPEED * move_dir, _get_h_weight())
-	
+	print(_get_h_weight())
 	# Flip horizontally if facing left, otherwise default face right
 	if move_dir == -1: # if facing left
 		get_node("CharacterRig/Torso").set_flip_h(true)
